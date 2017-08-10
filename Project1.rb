@@ -25,9 +25,14 @@ class Expense
     @spending = spending
   end
   attr_accessor :spending
+  def shoppingcart(cart)
+    total = cart.inject(0){|sum,x| sum + x }
+    puts "Your total amount you spend is #{total}"
+  end
 end
 
 
+cart = []
 array = []
 puts "Greeting. Enter Name:"
 name = gets.chomp
@@ -45,4 +50,10 @@ array << gets.chomp
 
 money = Expense.new(array)
 
-puts money.spending
+money.spending.each do |idk|
+  puts "How much do you spend on #{idk}?"
+  answer = gets.chomp.to_i
+  cart << answer
+end
+
+money.shoppingcart(cart)
