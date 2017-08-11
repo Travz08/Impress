@@ -17,9 +17,6 @@ class User
     @balance = balance
   end
   attr_accessor :name, :age, :balance
-  # def
-  #   savings = (student.balance -)
-  # end
 end
 
 class Time
@@ -33,7 +30,9 @@ class Time
   def datemonth(amount)
     amount
   end
-
+  def dateyear(amount)
+    amount*12
+  end
 end
 
 class Expense
@@ -57,22 +56,28 @@ class Goals
 end
 cart = []
 array = []
+system("clear")
+system("artii '#GOAL$'")
 puts "Greeting. Enter Name:"
 name = gets.chomp
+system("clear")
 puts "Hello #{name}, How old are you?"
 age = gets.chomp.to_i
+system("clear")
 puts "Please state your monthly income"
 balance = gets.chomp.to_i
+system("clear")
 student = User.new(name, age, balance)
 puts "So your monthly income is #{student.balance}"
 
 puts "How many expenses do you have?"
 expense_count = gets.chomp.to_i
-
+system("clear")
 i = 0
 while i < expense_count
 puts "Enter expenses:"
 input = gets.chomp
+system("clear")
 array << input
 i += 1
 end
@@ -82,6 +87,7 @@ money = Expense.new(array)
 money.spending.each do |x|
   puts "How much do you spend on #{x} per week?"
   answer = gets.chomp.to_i
+  system("clear")
   cart << answer
 end
 total1 = money.shoppingcart(cart)
@@ -92,40 +98,81 @@ puts "Name your goal:"
 treat = gets.chomp
 puts "How much is this #{treat}?"
 price = gets.chomp.to_i
+system("clear")
 puts "Alright so you want a #{treat} that costs $#{price}"
-puts "When would you like to buy this item?"
-puts "1.___ weeks\n2.___ months"
-deadline = gets.chomp.to_i
+
+
+
+#DATES
+puts "Would you like to achieve your goal in:"
+puts "a) Weeks\nb) Months\nc) Years"
+deadline = gets.chomp
+system("clear")
 case deadline
-when 1
+when "a"
   puts "In how many weeks?"
   timeline = gets.chomp.to_i
-when 2
+  system("clear")
+  finaldatew = Time.new(timeline)
+  weeksResult = finaldatew.dateweek(timeline)
+  remainder = goal.total(student)
+  reality = (remainder*weeksResult - price)
+  if student.balance < (price/timeline)
+    puts "Please reconsider your deadline date and try again."
+  elsif remainder*weeksResult > price
+    puts "at your deadline you can buy your goal item and have $#{reality} remaining"
+  elsif remainder*weeksResult < price
+    save = (price - remainder*weeksResult)/timeline
+    puts "You may have to re-evaluate your expenses. and try to save another $#{save.abs} per week in order to reach your goal"
+  end
+when "b"
   puts "In how many months?"
+  months = gets.chomp.to_i
+  system("clear")
+  finaldate = Time.new(months)
+  monthsResult = finaldate.datemonth(months)
+  remainder = goal.total(student)
+  reality = (remainder*months - price)
+  if student.balance < (price/months)
+    puts "Please reconsider your deadline date and try again."
+  elsif remainder*months > price
+    puts "at your deadline you can buy your goal item and have $#{reality} remaining"
+  elsif remainder*months < price
+    save = (price - remainder*months)/months
+    puts "You may have to re-evaluate your expenses. and try to save another $#{save.abs} per week in order to reach your goal"
+  end
+when "c"
+  puts "In how many years?"
   timeline = gets.chomp.to_i
+  system("clear")
+  finaldatey = Time.new(months)
+  yearsResult = finaldatey.dateyear(timeline)
+  remainder = goal.total(student)
+  reality = (remainder*yearsResult - price)
+  if student.balance < (price/timeline)
+    puts "Please reconsider your deadline date and try again."
+  elsif remainder*yearsResult > price
+    puts "at your deadline you can buy your goal item and have $#{reality} remaining"
+  elsif remainder*yearsResult < price
+    save = (price - remainder*yearsResult)/timeline
+    puts "You may have to re-evaluate your expenses. and try to save another $#{save.abs} per week in order to reach your goal"
+  end
 end
-finaldate = Time.new(timeline)
+#translates to amount of months
+# weeksResult = finaldate.dateweek(timeline)
 #amount leftover
-remainder = goal.total(student)
+
 #deadline
-weeks = finaldate.dateweek(timeline)
-months = finaldate.datemonth(timeline)
+
 #amount leftover per month*amount of months - price
 
-woo = (remainder*weeks - price)
-woo2 = (remainder*months - price)
+# woo = (remainder*weeks - price)
+#
 
 #impossible
-if remainder*weeks < (price/timeline)
-  puts "Please reconsider your deadline date and try again."
-elsif woo > remainder*weeks
-  puts "at your deadline you can buy your goal item and have #{woo} remaining"
-elsif woo < remainder*weeks
-  save = (price - remainder*weeks)/timeline
-  puts "You may have to re-evaluate your expenses. and try to save another #{save} per week in order to reach your goal"
+
 # elsif woo2 > remainder*months
 #   puts "at your deadline you can buy your goal item and have #{woo} remaining"
 # elsif woo2 < remainder*months
 #   save = (price - remainder*months)/timeline
 #   puts "You may have to re-evaluate your expenses. and try to save another #{save} per month in order to reach your goal"
-# end
