@@ -1,22 +1,20 @@
 #I want to buy this item(s) that costs $____ by this date how much money do i need to save each week to obtain this item(s).
 # Note: It can be converted to hours (how much hours I need to work to get this item)-----> a bar graph of hours
-require 'date'
-date1 = DateTime.now
-week = DateTime.now+7
-month = DateTime.now+30
-year = DateTime.now+365
+require 'colorize' #text color
+require 'artii' #title gem
+require 'date' #current date
+require 'tty-prompt' #prompt gem
+require "continuation" #save point/ check point
 
-dw = (week - date1).to_i
-dm = (month - date1).to_i
-dy = (year - date1).to_i
 
 class User
-  def initialize(name, age, balance)
+  def initialize(name, balance, email, password)
     @name = name
-    @age = age
     @balance = balance
+    @email = email
+    @password = password
   end
-  attr_accessor :name, :age, :balance
+  attr_accessor :name, :balance, :email, :password
 end
 
 class Time
@@ -57,18 +55,54 @@ end
 cart = []
 array = []
 system("clear")
-system("artii '#GOAL$'")
-puts "Greeting. Enter Name:"
-name = gets.chomp
-system("clear")
-puts "Hello #{name}, How old are you?"
-age = gets.chomp.to_i
-system("clear")
-puts "Please state your monthly income"
+def welcome
+    `say -v Zarvox Welcome #{@name} to Hashtag Goals`
+end
+def art
+    `artii '#GOAL$'`.colorize(:yellow)
+end
+prompt = TTY::Prompt.new
+dolla = prompt.decorate('$', :yellow)
+continuation = callcc { |c| c } # define our savepoint
+continuation
+hi = prompt.select("Welcome to #GOAL$", %w(Log\ in Sign\ Up))
+hi
+case hi
+when "Log\ in"
+  email = prompt.ask('What is your email?')
+  email
+  if email == @correct
+  password = prompt.mask('What is your password?', mask: dolla)
+  password
+
+  else
+  puts "Incorrect Email.\nThe email you entered doesn't appear to belong to an account.\nPlease check your email address and try again.".colorize(:red)
+  continuation.call(continuation)
+  end
+
+when "Sign\ Up"
+  @correct = prompt.ask('What is your email?') { |q| q.validate :email }
+  @correct
+  pw = prompt.mask('Create a password:', mask: dolla)
+  pw
+  puts ("Please enter your name:")
+  @name = gets.chomp
+  continuation.call(continuation)
+end
+if password == pw
+  system ("clear")
+else
+  puts "Incorrect Password.\nThe password you've entered is incorrect.\nPlease try again.".colorize(:red)
+  continuation.call(continuation)
+end
+puts art
+puts "Welcome #{@name} to #GOAL$"
+welcome
+puts "Please state your monthly income:"
 balance = gets.chomp.to_i
 system("clear")
-student = User.new(name, age, balance)
-puts "So your monthly income is #{student.balance}"
+student = User.new(@name, balance, email, password)
+# puts "So your monthly income is #{student.balance}"
 
 puts "How many expenses do you have?"
 expense_count = gets.chomp.to_i
@@ -91,25 +125,24 @@ money.spending.each do |x|
   cart << answer
 end
 total1 = money.shoppingcart(cart)
-puts "You spend a total of #{total1} per month"
+puts "#{@name}, You spend a total of $#{total1} per month"
 goal = Goals.new(total1)
 
 puts "Name your goal:"
 treat = gets.chomp
-puts "How much is this #{treat}?"
+puts "What is the price of the #{treat}?"
 price = gets.chomp.to_i
 system("clear")
-puts "Alright so you want a #{treat} that costs $#{price}"
+puts "Okay #{@name}, you want a #{treat} that costs $#{price}"
 
 
 
 #DATES
-puts "Would you like to achieve your goal in:"
-puts "a) Weeks\nb) Months\nc) Years"
-deadline = gets.chomp
+deadline = prompt.select("Would you like to achieve your goal in:", %w(Weeks Months Years))
+deadline
 system("clear")
 case deadline
-when "a"
+when "Weeks"
   puts "In how many weeks?"
   timeline = gets.chomp.to_i
   system("clear")
@@ -117,15 +150,16 @@ when "a"
   weeksResult = finaldatew.dateweek(timeline)
   remainder = goal.total(student)
   reality = (remainder*weeksResult - price)
+  deadlinew = (DateTime.now + (timeline*7))
   if student.balance < (price/timeline)
     puts "Please reconsider your deadline date and try again."
   elsif remainder*weeksResult > price
-    puts "at your deadline you can buy your goal item and have $#{reality} remaining"
+    puts "at your deadline #{deadlinew} you can buy your goal item and have $#{reality} remaining"
   elsif remainder*weeksResult < price
     save = (price - remainder*weeksResult)/timeline
     puts "You may have to re-evaluate your expenses. and try to save another $#{save.abs} per week in order to reach your goal"
   end
-when "b"
+when "Months"
   puts "In how many months?"
   months = gets.chomp.to_i
   system("clear")
@@ -133,15 +167,16 @@ when "b"
   monthsResult = finaldate.datemonth(months)
   remainder = goal.total(student)
   reality = (remainder*months - price)
+  deadline = (DateTime.now + (months*30))
   if student.balance < (price/months)
     puts "Please reconsider your deadline date and try again."
   elsif remainder*months > price
-    puts "at your deadline you can buy your goal item and have $#{reality} remaining"
+    puts "at your deadline #{deadline} you can buy your goal item and have $#{reality} remaining"
   elsif remainder*months < price
     save = (price - remainder*months)/months
     puts "You may have to re-evaluate your expenses. and try to save another $#{save.abs} per week in order to reach your goal"
   end
-when "c"
+when "Years"
   puts "In how many years?"
   timeline = gets.chomp.to_i
   system("clear")
@@ -149,30 +184,21 @@ when "c"
   yearsResult = finaldatey.dateyear(timeline)
   remainder = goal.total(student)
   reality = (remainder*yearsResult - price)
+  deadliney = (DateTime.now + (timeline*365))
   if student.balance < (price/timeline)
     puts "Please reconsider your deadline date and try again."
   elsif remainder*yearsResult > price
-    puts "at your deadline you can buy your goal item and have $#{reality} remaining"
+    puts "at your deadline #{deadliney} you can buy your goal item and have $#{reality} remaining"
   elsif remainder*yearsResult < price
     save = (price - remainder*yearsResult)/timeline
     puts "You may have to re-evaluate your expenses. and try to save another $#{save.abs} per week in order to reach your goal"
   end
 end
-#translates to amount of months
-# weeksResult = finaldate.dateweek(timeline)
-#amount leftover
-
-#deadline
-
-#amount leftover per month*amount of months - price
-
-# woo = (remainder*weeks - price)
-#
-
-#impossible
-
-# elsif woo2 > remainder*months
-#   puts "at your deadline you can buy your goal item and have #{woo} remaining"
-# elsif woo2 < remainder*months
-#   save = (price - remainder*months)/timeline
-#   puts "You may have to re-evaluate your expenses. and try to save another #{save} per month in order to reach your goal"
+continue = prompt.select("Would you like to:", %w(Enter\ new\ goal Log\ out))
+continue
+case continue
+when "Enter new goal"
+  #Try  to loop back to after log in
+when "Log out"
+  exit
+end
