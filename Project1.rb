@@ -52,15 +52,15 @@ class Goals
   student.balance - hashtag
   end
 end
-
+def noWay
+  puts ("Can't accept this.").colorize(:red)
+end
 
 ###########The App Begins Here ##############
 cart = []
 array = []
 system("clear")
-def noWay
-  puts "Can't accept this."
-end
+
 def welcome
     `say -v Zarvox Welcome #{@name} to Hashtag Goals`
 end
@@ -82,7 +82,7 @@ when "Log\ in"
   password
 
   else
-  puts "Incorrect Email.\nThe email you entered doesn't appear to belong to an account.\nPlease check your email address and try again.".colorize(:red)
+  puts ("Incorrect Email.\nThe email you entered doesn't appear to belong to an account.\nPlease check your email address and try again.").colorize(:red)
   continuation.call(continuation)
   end
 
@@ -104,39 +104,20 @@ end
 puts art
 puts "Welcome #{@name} to #GOAL$"
 welcome
-puts "Please state your monthly income:"
-balance = gets.chomp.to_i
+go = false
+while go == false
+  puts "Please state your monthly income:"
+  input = gets.chomp
+  if input =~ /^-?[0-9]+$/
+    go = true
+  else
+    puts ("Invalid input. Please enter valid value.").colorize(:red)
+    go = false
+  end
+end
+balance = input.to_i
 system("clear")
 student = User.new(@name, balance, email, password)
-# puts "So your monthly income is #{student.balance}"
-# go = false
-# while go == false
-#
-# puts "Greeting. Enter Name:"
-# name = gets.chomp
-#   if name == ""
-#     noWay()
-#     puts "This field cannot be blank"
-#     puts "Enter your name again:"
-#   else
-#     go = true
-#     puts "Hello #{name}, How old are you?"
-#     age = gets.chomp.to_i
-#   end
-# end
-# #Collets input about income, pushes it all to the object set_user.
-# go = false
-# while go == false
-# puts "Please state your monthly wage"
-# balance = gets.chomp.to_i
-#   if balance <= 0
-#     noWay()
-#   else go = true
-#     student = User.new(name, age, balance)
-#     puts "So your monthly income is #{student.balance}"
-#   end
-# end
-#Collets info about outcomes, pushes it to the class Expenses and calculates total outcome.
 go = false
 while go == false
 puts "How many expenses do you have?"
@@ -176,8 +157,8 @@ end
 total1 = money.shoppingcart(cart)
 puts "#{@name}, You spend a total of $#{total1} per month"
 goal = Goals.new(total1)
-
-
+newgoal = true
+while newgoal == true
 #Collecting info about user's desired item
 go = false
 while go == false
@@ -206,8 +187,18 @@ deadline
 system("clear")
 case deadline
 when "Weeks"
+go = false
+while go == false
   puts "In how many weeks?"
-  timeline = gets.chomp.to_i
+  @input = gets.chomp
+  if @input =~ /^-?[0-9]+$/
+    go = true
+  else
+    puts ("Invalid input. Please enter valid value.").colorize(:red)
+    go = false
+  end
+end
+timeline = @input.to_i
   system("clear")
   finaldatew = Time.new(timeline)
   weeksResult = finaldatew.dateweek(timeline)
@@ -215,16 +206,26 @@ when "Weeks"
   reality = (remainder*weeksResult - price)
   deadlinew = (DateTime.now + (timeline*7))
   if student.balance < (price/timeline)
-    puts "Please reconsider your deadline date and try again."
+    puts ("Please reconsider your deadline date and try again.").colorize(:red)
   elsif remainder*weeksResult > price
-    puts "at your deadline #{deadlinew} you can buy your goal item and have $#{reality} remaining"
+    puts "at your deadline #{deadlinew.to_date} you can buy your goal item and have $#{reality} remaining"
   elsif remainder*weeksResult < price
     save = (price - remainder*weeksResult)/timeline
-    puts "You may have to re-evaluate your expenses. and try to save another $#{save.abs} per week in order to reach your goal"
+    puts ("You may have to re-evaluate your expenses. and try to save another $#{save.abs} per week in order to reach your goal").colorize(:red)
   end
 when "Months"
+go = false
+while go == false
   puts "In how many months?"
-  months = gets.chomp.to_i
+  @input = gets.chomp
+  if @input =~ /^-?[0-9]+$/
+    go = true
+  else
+    puts ("Invalid input. Please enter valid value.").colorize(:red)
+    go = false
+  end
+end
+months = @input.to_i
   system("clear")
   finaldate = Time.new(months)
   monthsResult = finaldate.datemonth(months)
@@ -232,16 +233,26 @@ when "Months"
   reality = (remainder*months - price)
   deadline = (DateTime.now + (months*30))
   if student.balance < (price/months)
-    puts "Please reconsider your deadline date and try again."
+    puts ("Please reconsider your deadline date and try again.").colorize(:red)
   elsif remainder*months > price
-    puts "at your deadline #{deadline} you can buy your goal item and have $#{reality} remaining"
+    puts "at your deadline #{deadline.to_date} you can buy your goal item and have $#{reality} remaining"
   elsif remainder*months < price
     save = (price - remainder*months)/months
-    puts "You may have to re-evaluate your expenses. and try to save another $#{save.abs} per week in order to reach your goal"
+    puts ("You may have to re-evaluate your expenses. and try to save another $#{save.abs} per week in order to reach your goal").colorize(:red)
   end
 when "Years"
+go = false
+while go == false
   puts "In how many years?"
-  timeline = gets.chomp.to_i
+  @input = gets.chomp
+  if @input =~ /^-?[0-9]+$/
+    go = true
+  else
+    puts ("Invalid input. Please enter valid value.").colorize(:red)
+    go = false
+  end
+end
+timeline = @input.to_i
   system("clear")
   finaldatey = Time.new(months)
   yearsResult = finaldatey.dateyear(timeline)
@@ -249,19 +260,21 @@ when "Years"
   reality = (remainder*yearsResult - price)
   deadliney = (DateTime.now + (timeline*365))
   if student.balance < (price/timeline)
-    puts "Please reconsider your deadline date and try again."
+    puts ("Please reconsider your deadline date and try again.").colorize(:red)
   elsif remainder*yearsResult > price
-    puts "at your deadline #{deadliney} you can buy your goal item and have $#{reality} remaining"
+    puts "at your deadline #{deadliney.to_date} you can buy your goal item and have $#{reality} remaining"
   elsif remainder*yearsResult < price
     save = (price - remainder*yearsResult)/timeline
-    puts "You may have to re-evaluate your expenses. and try to save another $#{save.abs} per week in order to reach your goal"
+    puts ("You may have to re-evaluate your expenses. and try to save another $#{save.abs} per week in order to reach your goal").colorize(:red)
   end
 end
 continue = prompt.select("Would you like to:", %w(Enter\ new\ goal Log\ out))
 continue
 case continue
 when "Enter new goal"
-  #Try  to loop back to after log in
+  newgoal = true
 when "Log out"
+  newgoal = false
   exit
+end
 end
