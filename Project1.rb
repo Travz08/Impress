@@ -52,9 +52,15 @@ class Goals
   student.balance - hashtag
   end
 end
+
+
+###########The App Begins Here ##############
 cart = []
 array = []
 system("clear")
+def noWay
+  puts "Can't accept this."
+end
 def welcome
     `say -v Zarvox Welcome #{@name} to Hashtag Goals`
 end
@@ -103,39 +109,96 @@ balance = gets.chomp.to_i
 system("clear")
 student = User.new(@name, balance, email, password)
 # puts "So your monthly income is #{student.balance}"
-
+# go = false
+# while go == false
+#
+# puts "Greeting. Enter Name:"
+# name = gets.chomp
+#   if name == ""
+#     noWay()
+#     puts "This field cannot be blank"
+#     puts "Enter your name again:"
+#   else
+#     go = true
+#     puts "Hello #{name}, How old are you?"
+#     age = gets.chomp.to_i
+#   end
+# end
+# #Collets input about income, pushes it all to the object set_user.
+# go = false
+# while go == false
+# puts "Please state your monthly wage"
+# balance = gets.chomp.to_i
+#   if balance <= 0
+#     noWay()
+#   else go = true
+#     student = User.new(name, age, balance)
+#     puts "So your monthly income is #{student.balance}"
+#   end
+# end
+#Collets info about outcomes, pushes it to the class Expenses and calculates total outcome.
+go = false
+while go == false
 puts "How many expenses do you have?"
 expense_count = gets.chomp.to_i
-system("clear")
-i = 0
-while i < expense_count
-puts "Enter expenses:"
-input = gets.chomp
-system("clear")
-array << input
-i += 1
+  if expense_count <= 0
+    noWay()
+  else go = true
+    system("clear")
+    i = 0
+    while i < expense_count
+      puts "Name your expenses:"
+      input = gets.chomp
+      system("clear")
+      array << input
+      i += 1
+    end
+  end
 end
 
 money = Expense.new(array)
 
 money.spending.each do |x|
-  puts "How much do you spend on #{x} per week?"
-  answer = gets.chomp.to_i
-  system("clear")
-  cart << answer
+  go = false
+  while go == false
+    puts "How much do you spend on #{x} per week?"
+    answer = gets.chomp.to_i
+    if answer <= 0
+      noWay()
+    else go = true
+      system("clear")
+      cart << answer
+    end
+  end
 end
+
+
 total1 = money.shoppingcart(cart)
 puts "#{@name}, You spend a total of $#{total1} per month"
 goal = Goals.new(total1)
 
-puts "Name your goal:"
+
+#Collecting info about user's desired item
+go = false
+while go == false
+puts "What is your goal:"
 treat = gets.chomp
-puts "What is the price of the #{treat}?"
-price = gets.chomp.to_i
-system("clear")
-puts "Okay #{@name}, you want a #{treat} that costs $#{price}"
-
-
+  if treat == ""
+    noWay()
+  else go = true
+    go = false
+    while go == false
+    puts "How much is this #{treat}?"
+    price = gets.chomp.to_i
+      if price <= 0
+        noWay()
+      else go = true
+        system("clear")
+        puts "Alright so you want a #{treat} that costs $#{price}"
+      end
+    end
+  end
+end
 
 #DATES
 deadline = prompt.select("Would you like to achieve your goal in:", %w(Weeks Months Years))
